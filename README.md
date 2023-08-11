@@ -6,6 +6,8 @@ For example, The project hello-reflex.
 Suggest to use requirments.txt to show what verion of reflex you are using.  
 You can also upgrade your example when everytime the new version of reflex is released.   
 It's better to refer hello-reflex example.  
+
+# PyCon TW 2023 - Sprints Project - 相關資訊 Information  
 ------
 - If you have enough ability, you can try to contribute to the official core source code
 https://github.com/reflex-dev/reflex
@@ -22,3 +24,8 @@ https://github.com/reflex-dev/reflex-examples
 - 但如果這些都太難的話，這邊提供大家比較容易上手的貢獻機會，就是寫寫你的example code推上來，
 我幫你審，中文英文我都通。
 https://github.com/reflex-playground/reflex-community-examples
+
+------
+
+哪裡報名? Where to sign up? --> 
+https://pycontw.kktix.cc/events/2023-sprints 
