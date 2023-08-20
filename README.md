@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/gifts-differing/community.svg)](https://app.gitter.im/#/room/#reflex-community-examples:gitter.im?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # reflex-community-examples
 ## Introduction 
 - Welcome to share your reflex community examples. Make your exmaple code and send PR here.  For example, The hello-reflex folder in the project is one of the examples.  
