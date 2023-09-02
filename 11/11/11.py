@@ -10,9 +10,9 @@ class State(rx.State):
     def go (self):
         self.hero += 1
         self.monster -= 1
-        if  State.monster ==0:
-            health -= 1
-            State.monster+=20
+        if  self.monster ==0:
+            self.health -= 1
+            self.monster+=20
         #if State.health ==0:
             #return rx.text("about Page")    
     def back (self):
