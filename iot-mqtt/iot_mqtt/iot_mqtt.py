@@ -11,6 +11,25 @@ async def set_state_count(count_val:int):
         app.state_manager.set_state(token, state)
     return {"state_count":ret_count_val}
 
+async def add_state_count():
+    keys = list(app.state_manager.states) #convert the keys of dict into the list
+    ret_count_val: int = 0
+    for token in keys: # change state.count for all current running frontend
+        state = app.state_manager.get_state(token)
+        state.count = state.count + 1
+        ret_count_val = state.count
+        app.state_manager.set_state(token, state)
+    return {"state_count":ret_count_val}
+
+async def sub_state_count():
+    keys = list(app.state_manager.states) #convert the keys of dict into the list
+    ret_count_val: int = 0
+    for token in keys: # change state.count for all current running frontend
+        state = app.state_manager.get_state(token)
+        state.count = state.count - 1
+        ret_count_val = state.count
+        app.state_manager.set_state(token, state)
+    return {"state_count":ret_count_val}
 
 class State(rx.State):
     count: int = 0
@@ -51,10 +70,14 @@ def index():
     )
 
 print("Hint:You can open http://localhost:8000/state_count/33 to set count value as 33")
+print("Hint:You can open http://localhost:8000/sub_state_count/ to substract one on the count value")
+print("Hint:You can open http://localhost:8000/add_state_count/ to add one on the count value")
 # Add state and page to the app.
 
 app = rx.App(state=State, style=base_style)
 app.api.add_api_route("/state_count/{count_val}", set_state_count)
+app.api.add_api_route("/add_state_count/", add_state_count)
+app.api.add_api_route("/sub_state_count/", sub_state_count)
 app.add_page(
     index,
     title = "IoT MQTT Collaborative Counter App",
@@ -66,4 +89,7 @@ app.add_page(
     ],
     on_load = State.onload,
 )
+
+
+
 app.compile()
