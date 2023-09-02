@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import requests
 
 # Setup MQTT broker connection
 broker_address = "broker.emqx.io"
@@ -15,7 +16,27 @@ def on_connect(client, userdata, flags, rc):
 
 # receive the message from on_message callback
 def on_message(client, userdata, msg):
-    print(f"Subscribed Topic '{msg.topic}' Message：{msg.payload.decode('utf-8')}")
+    text_message = msg.payload.decode('utf-8')
+    print(f"Subscribed Topic '{msg.topic}' Message：{text_message}")
+    # filter the message 'add' to count up for reflex webapp and 'sub' to count donw for reflex webapp
+    sub_url = "http://localhost:8000/sub_state_count/"
+    add_url = "http://localhost:8000/add_state_count/"
+    request_url = ""
+    if text_message=="add":
+        request_url = add_url
+    elif text_message=="sub":
+        request_url = sub_url
+    if request_url != "":
+        try:
+            response = requests.get(request_url)
+            # check the http response
+            if response.status_code == 200:
+                print(f"Success to request. And the responsed content is {response.text}")
+            else:
+                print(f"Request failed,  HTTP Stuats code:{response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Http Reqeust Failed: {e}")
+
 
 # create MQTT client instance
 client = mqtt.Client()
