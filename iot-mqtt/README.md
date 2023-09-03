@@ -45,7 +45,7 @@ Just run this mqtt application
 **Terminal 3**
 If you want to count up, use the following command. 
 ```bash
-python mqtt_send.py -t "MiloTopic" -m "sub"
+python mqtt_send.py -t "MiloTopic" -m "add"
 ```
 If you want to count down, use the following command.
 ```bash
