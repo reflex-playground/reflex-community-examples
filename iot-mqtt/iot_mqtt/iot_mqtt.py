@@ -63,7 +63,7 @@ def index():
                 rx.button("-", on_click=State.count_down),
             ),
             rx.link(State.count),
-            spacing="1.5em",
+            spacing="0.5em",
             font_size="2em",
         ),
         padding_top="10%",

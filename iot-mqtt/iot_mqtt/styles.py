@@ -22,7 +22,7 @@ base_style = {
             "color": "rgb(107,99,246)",
         },
         "font_size":["2em", "3em", "3em", "4em"],
-        "font_weight":800,
+        "font_weight":100,
         "font_family":"Inter",
         "background_image":"linear-gradient(271.68deg, #EE756A 25%, #756AEE 50%)",
         "background_clip":"text",
