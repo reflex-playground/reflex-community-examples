@@ -25,6 +25,12 @@ After you run the pymqtt.py, you can use the above command to publish the TestMe
 And the pymqtt.py can receive the TestMessage on the topic "MiloTopic". Because pymqtt.py subscribe  
 on the topic "MiloTopic" in default.   
 
+## Run mqtt in hardware ESP-32 with python code
+Just refer what the directory say in ./wokwi-esp32. 
+You can run in the simulator first. 
+That's would be nice if you just want to make your ESP32 real hardware to run this example. 
+
+
 # How to play all Iot-MQTT Collaborative counter application?
 
 **Terminal 1**
