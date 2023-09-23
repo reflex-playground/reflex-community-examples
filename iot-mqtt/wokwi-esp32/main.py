@@ -31,10 +31,13 @@ displayView(
 
 
 
+outAddPin = Pin(2, Pin.OUT)  
+inAddPin = Pin(15, Pin.IN) # D15 Pin: detect the button clicking
+outAddPin.value(1) 
 
-buttonPin = Pin(18, Pin.IN) # D2 Pin: detect the button clicking
-outputPin = Pin(5, Pin.OUT)  
-outputPin.value(1) 
+outSubPin = Pin(12, Pin.OUT)  
+inSubPin = Pin(13, Pin.IN) # D13 Pin: detect the button clicking
+outSubPin.value(1) 
 
 
 # MQTT Server Parameters
@@ -77,6 +80,24 @@ displayView(
   'Start to click ',
   'button to count')
 while True:
-  if buttonPin.value() == 1:
+  if inAddPin.value() == 1:
+    print("MQTT Add")
     client.publish(MQTT_TOPIC, "add")
+    displayView( 
+      'MQTT Connected. ', 
+      'Start to click ',
+      'button to count',
+      'MQTT pub ++1 '
+      )
+
+  elif inSubPin.value() == 1:
+    print("MQTT Sub")
+    client.publish(MQTT_TOPIC, "sub")
+    displayView( 
+      'MQTT Connected. ', 
+      'Start to click ',
+      'button to count',
+      'MQTT pub --1 '
+      )
+
   time.sleep(1)
