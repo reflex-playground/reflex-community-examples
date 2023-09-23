@@ -58,8 +58,12 @@ If you want to count down, use the following command.
 python mqtt_send.py -t "MiloTopic" -m "sub"
 ```
 
-# Some new powerful tool 
+# Some new powerful tool to assist this example
+## Text-UI tool (coding in Python)
 $ python mqtttui.py   
 You can run Text-UI of MQTT for this demo 
-
 <img width="752" alt="Screenshot 2023-09-20 at 11 20 20 PM" src="https://github.com/reflex-playground/reflex-community-examples/assets/12568287/a20a3478-520f-405b-85ad-3bcbac00d5d9">
+
+## Wokwi ESP32 Simulator (coding in Python) 
+
+<img width="1440" alt="Screenshot 2023-09-23 at 9 15 11 AM" src="https://github.com/reflex-playground/reflex-community-examples/assets/12568287/d3eb4b55-77a6-4aaf-ac46-282a4eb81c53">
