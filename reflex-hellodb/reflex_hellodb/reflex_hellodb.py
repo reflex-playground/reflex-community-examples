@@ -1,7 +1,5 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-from rxconfig import config
 import reflex as rx
-
+import asyncio
 class User(rx.Model, table=True):
     user_name: str
     user_email: str
@@ -15,6 +13,7 @@ def user_row(user:User):
     
 class State(rx.State):
     """The app state."""
+    is_run_tick: bool = False
     users:list[User] = []
     user_name:str=""
     user_email:str=""
@@ -47,6 +46,18 @@ class State(rx.State):
             )
             sess.commit()
             return self.db_getUsers()
+        
+    async def tick(self):
+        # run tick for update frontend ui for updating count
+        self.getUsers()
+        if self.is_run_tick:
+            await asyncio.sleep(0.5)
+            return self.tick
+        
+    async def onload(self):
+        self.is_run_tick = True
+        return self.tick
+        
     pass
 
 
@@ -82,5 +93,10 @@ def index() -> rx.Component:
 
 # Add state and page to the app.
 app = rx.App(state=State)
-app.add_page(index)
+app.add_page(
+    index,
+    title = "rx.CRUD",
+    description = "learn databse from a simple CRUD example",
+    on_load = State.onload
+)
 app.compile()
