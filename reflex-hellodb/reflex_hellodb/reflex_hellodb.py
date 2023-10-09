@@ -1,38 +1,30 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-from rxconfig import config
 import reflex as rx
-
-
+import asyncio
 class User(rx.Model, table=True):
     user_name: str
     user_email: str
-    
-
 
 def user_row(user:User):
     return rx.tr(
-        rx.td(str(1)),
+        rx.td(str(user.id)),
         rx.td(user.user_name),
         rx.td(user.user_email),
     )
     
-
 class State(rx.State):
     """The app state."""
+    is_run_tick: bool = False
     users:list[User] = []
     user_name:str=""
     user_email:str=""
-    def getUsers(self):        
+    def getUsers(self):
+        self.db_getUsers()
         print("click to call getUsers")
         try:
             for user in self.users:
                 print(user)
         except:
             print("Exception")
-    def addUser(self):
-        strnum:str = str(len(self.users))
-        #self.commitUser(strnum, "Name"+strnum, f"my_{strnum}_email@mail.com")
-        self.users.append( User(strnum, "Name"+strnum, f"my_{strnum}_email@mail.com"))
       
     def db_getUsers(self) -> list[User]:
         with rx.session() as sess:
@@ -45,37 +37,27 @@ class State(rx.State):
     def db_addUser(self):
         with rx.session() as sess:
             sess.expire_on_commit = False
-            self.user_name = "myUserName"
-            self.user_email = "myUserEmail"
+            strnum:str = str(len(self.users))
+            user_name:str= f"my_{strnum}_UserName"
+            user_email:str = f"my_{strnum}_UserEmail"
+
             sess.add(
-                User(
-                    #user_email=self.user.email, contact_name=self.name, email=self.email
-                    
-                    user_name=self.user_name, user_email=self.user_email
-                )
+                User(user_name=user_name, user_email=user_email)
             )
             sess.commit()
             return self.db_getUsers()
         
-    def commitUser(self, userId:str, userName:str, userEmail:str):
-        with rx.session() as session:
-            session.add(
-                User(
-                    userId=int(userId),
-                    userName=userName,
-                    userEmail=userEmail
-                )
-            )
-            session.commit()
-        self.queryUser()
-                
-    def queryUser(self):
-        with rx.session() as session:
-            self.users = (
-                session.query(User)
-                .filter(User.username.contains(self.name))
-                .all()
-            )            
+    async def tick(self):
+        # run tick for update frontend ui for updating count
+        self.getUsers()
+        if self.is_run_tick:
+            await asyncio.sleep(0.5)
+            return self.tick
+        
+    async def onload(self):
+        self.is_run_tick = True
+        return self.tick
+        
     pass
 
 
@@ -111,5 +93,10 @@ def index() -> rx.Component:
 
 # Add state and page to the app.
 app = rx.App(state=State)
-app.add_page(index)
+app.add_page(
+    index,
+    title = "rx.CRUD",
+    description = "learn databse from a simple CRUD example",
+    on_load = State.onload
+)
 app.compile()
