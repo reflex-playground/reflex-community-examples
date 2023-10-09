@@ -4,27 +4,24 @@ import reflex as rx
 
 
 class User(rx.Model, table=True):
-    """A table for users in the database."""
-    userId: str
-    userName: str
-    userEmail: str
-    def __init__(self, userId:str, name:str, email:str):
-        self.userId = userId
-        self.userName = name
-        self.userEmail = email
-    def __repr__(self):
-        return "("+self.userId+","+self.userName+","+self.userEmail+")" 
+    user_name: str
+    user_email: str
+    
+
+
 def user_row(user:User):
     return rx.tr(
-        rx.td(user.userId),
-        rx.td(user.userName),
-        rx.td(user.userEmail),
+        rx.td(str(1)),
+        rx.td(user.user_name),
+        rx.td(user.user_email),
     )
     
 
 class State(rx.State):
     """The app state."""
-    users:list[User]
+    users:list[User] = []
+    user_name:str=""
+    user_email:str=""
     def getUsers(self):        
         print("click to call getUsers")
         try:
@@ -36,6 +33,29 @@ class State(rx.State):
         strnum:str = str(len(self.users))
         #self.commitUser(strnum, "Name"+strnum, f"my_{strnum}_email@mail.com")
         self.users.append( User(strnum, "Name"+strnum, f"my_{strnum}_email@mail.com"))
+      
+    def db_getUsers(self) -> list[User]:
+        with rx.session() as sess:
+            self.users = (
+                sess.query(User)
+                .all()
+            )
+            return
+  
+    def db_addUser(self):
+        with rx.session() as sess:
+            sess.expire_on_commit = False
+            self.user_name = "myUserName"
+            self.user_email = "myUserEmail"
+            sess.add(
+                User(
+                    #user_email=self.user.email, contact_name=self.name, email=self.email
+                    
+                    user_name=self.user_name, user_email=self.user_email
+                )
+            )
+            sess.commit()
+            return self.db_getUsers()
         
     def commitUser(self, userId:str, userName:str, userEmail:str):
         with rx.session() as session:
@@ -64,7 +84,7 @@ def index() -> rx.Component:
         rx.color_mode_button(rx.color_mode_icon(), float="right"),
         rx.vstack(
             rx.heading("Hello Database CRUD of the Reflex!", font_size="2em"),
-            rx.button("Add User", on_click=State.addUser),
+            rx.button("Add User", on_click=State.db_addUser),
             rx.button("Get User", on_click=State.getUsers),
             rx.table_container(
                 rx.table(
