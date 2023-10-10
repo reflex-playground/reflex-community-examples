@@ -39,34 +39,23 @@ class State(rx.State):
         with rx.session() as sess:
             sess.expire_on_commit = False
             strnum:str = str(len(self.users))
-            user_name:str= f"my_{strnum}_UserName"
-            user_email:str = f"my_{strnum}_UserEmail"
             last_user:User = sess.query(User).order_by(User.id.desc()).first()
             if last_user:
                 last_user.user_name = "EditedName"
                 sess.commit()
                 pass                
-
-            """
-            sess.add(
-                User(user_name=user_name, user_email=user_email)
-            )
-            sess.commit()
-            """
             return self.db_getUsers()
 
     def db_deleteUser(self):
         with rx.session() as sess:
             sess.expire_on_commit = False
             strnum:str = str(len(self.users))
-            user_name:str= f"my_{strnum}_UserName"
-            user_email:str = f"my_{strnum}_UserEmail"
-            """
-            sess.add(
-                User(user_name=user_name, user_email=user_email)
-            )
-            sess.commit()
-            """
+            last_user:User = sess.query(User).order_by(User.id.desc()).first()
+            if last_user:
+                sess.delete(last_user)
+                sess.commit()
+                pass                
+
             return self.db_getUsers()
 
 
@@ -102,18 +91,7 @@ def index() -> rx.Component:
         rx.color_mode_button(rx.color_mode_icon(), float="right"),
         rx.vstack(
             rx.heading("Hello Database CRUD of the Reflex!", font_size="2em"),
-            
-            rx.input(
-                id="name_text_field",
-                placeholder="Type Name...",
-                bg="white",
-            ),
-            rx.input(
-                id="email_text_field",
-                placeholder="Type Email...",
-                bg="white",
-            ),
-            
+                        
             rx.button("Update Last User", on_click=State.db_updateUser),
             rx.button("Create User", on_click=State.db_addUser),
             rx.button("Read Users", on_click=State.getUsers),
