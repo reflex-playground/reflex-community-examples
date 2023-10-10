@@ -19,10 +19,11 @@ class State(rx.State):
     user_email:str=""
     def getUsers(self):
         self.db_getUsers()
-        print("click to call getUsers")
+        #print("click to call getUsers")
         try:
             for user in self.users:
-                print(user)
+                #print(user)
+                pass
         except:
             print("Exception")
       
@@ -33,7 +34,31 @@ class State(rx.State):
                 .all()
             )
             return
-  
+
+    def db_updateUser(self):
+        with rx.session() as sess:
+            sess.expire_on_commit = False
+            strnum:str = str(len(self.users))
+            last_user:User = sess.query(User).order_by(User.id.desc()).first()
+            if last_user:
+                last_user.user_name = "EditedName"
+                sess.commit()
+                pass                
+            return self.db_getUsers()
+
+    def db_deleteUser(self):
+        with rx.session() as sess:
+            sess.expire_on_commit = False
+            strnum:str = str(len(self.users))
+            last_user:User = sess.query(User).order_by(User.id.desc()).first()
+            if last_user:
+                sess.delete(last_user)
+                sess.commit()
+                pass                
+
+            return self.db_getUsers()
+
+
     def db_addUser(self):
         with rx.session() as sess:
             sess.expire_on_commit = False
@@ -66,8 +91,12 @@ def index() -> rx.Component:
         rx.color_mode_button(rx.color_mode_icon(), float="right"),
         rx.vstack(
             rx.heading("Hello Database CRUD of the Reflex!", font_size="2em"),
-            rx.button("Add User", on_click=State.db_addUser),
-            rx.button("Get User", on_click=State.getUsers),
+                        
+            rx.button("Update Last User", on_click=State.db_updateUser),
+            rx.button("Create User", on_click=State.db_addUser),
+            rx.button("Read Users", on_click=State.getUsers),
+            rx.button("Delete Last User", on_click=State.db_deleteUser),
+
             rx.table_container(
                 rx.table(
                     rx.thead(
