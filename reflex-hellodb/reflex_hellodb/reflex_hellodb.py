@@ -6,7 +6,7 @@ class User(rx.Model, table=True):
 
 def user_row(user:User):
     return rx.tr(
-        rx.td(str(user.id)),
+        rx.td(user.id),
         rx.td(user.user_name),
         rx.td(user.user_email),
     )
