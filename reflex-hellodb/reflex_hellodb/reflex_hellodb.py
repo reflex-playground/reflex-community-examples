@@ -1,18 +1,22 @@
 import reflex as rx
+import json
 import asyncio
 class CommonState(rx.Model, table=True):
     sCounter:int
     sString:str
-    def __init__(self,sCounter:int, sString:str):
+    sJsonStr:str
+    def __init__(self,sCounter:int, sString:str, sJsonStr:str):
         self.sCounter = sCounter
         self.sString = sString
+        self.sJsonStr = sJsonStr
     def __prep__(self):
-        return f"[{self.sCounter} {self.sString}]"
+        return f"[{self.sCounter} {self.sString} {self.sJsonStr}]"
 def commonState_row(commonState:CommonState):
     return rx.tr(
         rx.td(commonState.id),
         rx.td(commonState.sCounter),
         rx.td(commonState.sString),
+        rx.td(commonState.sJsonStr),
     )
 class User(rx.Model, table=True):
     user_name: str
@@ -29,10 +33,11 @@ class State(rx.State):
     """The app state."""
     # member variable for implement a common state
     commonStates:list[CommonState] = [] # just support one row for the table
-    defaultState:CommonState = CommonState(sCounter=0, sString="a")
+    defaultState:CommonState = CommonState(sCounter=0, sString="a", sJsonStr='{"name":"Milo","age":18}')
     currentState:CommonState = CommonState(
         sCounter=defaultState.sCounter,
-        sString=defaultState.sString
+        sString=defaultState.sString,
+        sJsonStr=defaultState.sJsonStr,
     )
     def getStates(self) -> list[CommonState]:
         with rx.session() as sess:
@@ -43,9 +48,11 @@ class State(rx.State):
             if(len(self.commonStates)>0):
                 self.currentState.sCounter = self.commonStates[0].sCounter
                 self.currentState.sString = self.commonStates[0].sString
+                self.currentState.sJsonStr = self.commonStates[0].sJsonStr
             else:
                 self.currentState.sCounter = self.defaultState.sCounter
                 self.currentState.sString = self.defaultState.sString
+                self.currentState.sJsonStr = self.defaultState.sJsonStr
             return
     def setState(self, state:CommonState):
         if( len(self.commonStates) == 0):
@@ -56,6 +63,7 @@ class State(rx.State):
                     CommonState(
                         sCounter=state.sCounter,
                         sString=state.sString,
+                        sJsonStr=state.sJsonStr,
                     )
                 )
                 sess.commit()
@@ -68,6 +76,7 @@ class State(rx.State):
                 if last_state:
                     last_state.sCounter = state.sCounter
                     last_state.sString = state.sString
+                    last_state.sJsonStr = state.sJsonStr
                     sess.commit()
                     pass
                 return self.getStates()
@@ -88,6 +97,15 @@ class State(rx.State):
         updatedState.sString = updatedState.sString + "a"
         self.setState(updatedState)
         pass
+    def jsonStrUpdate(self):
+        updatedState:CommonState = self.prepareCommonState()
+        data = json.loads(updatedState.sJsonStr)
+        data['name'] = data['name'] + 'o'
+        data['age'] = data['age'] + 1
+        updatedState.sJsonStr = json.dumps(data)
+        self.setState(updatedState)
+        pass
+
 
     # member variable for normal database
     is_run_tick: bool = False
@@ -172,6 +190,7 @@ def index() -> rx.Component:
             rx.button("Counter++", on_click=State.counterAdd),
             rx.button("Counter--", on_click=State.counterSub),
             rx.button("String+='a'", on_click=State.stringAppend),
+            rx.button("JsonStr update", on_click=State.jsonStrUpdate),
 
             rx.table_container(
                 rx.table(
