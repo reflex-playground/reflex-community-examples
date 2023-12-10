@@ -9,8 +9,24 @@ def fetch_and_sort_data(url):
         # Load the JSON data
         data = response.json()
 
+        # Modify each item to fit the new structure and order, removing unwanted attributes
+        updated_data = []
+        for item in data:
+            tlink = f"https://leetcode.com/problems/{item.get('TitleSlug', '')}"
+            clink = f"https://leetcode.com/contest/{item.get('ContestSlug', '')}"
+            updated_item = {
+                "Rating": item.get("Rating"),
+                "ID": item.get("ID"),
+                "Title": item.get("Title"),
+                "Link": tlink,
+                "ProblemIndex": item.get("ProblemIndex"),
+                "ContestID": item.get("ContestID_en"),
+                "ContestLink": clink,
+            }
+            updated_data.append(updated_item)
+
         # Sort the data based on the 'rating' key
-        return sorted(data, key=lambda x: x.get('Rating', 0), reverse=False)
+        return sorted(updated_data, key=lambda x: x.get('Rating', 0), reverse=False)
     except requests.RequestException as e:
         return f"An error occurred: {e}"
 
