@@ -12,19 +12,20 @@ def fetch_and_sort_data(url):
         # Modify each item to fit the new structure and order, removing unwanted attributes
         updated_data = []
         for item in data:
-            tlink = f"https://leetcode.com/problems/{item.get('TitleSlug', '')}"
-            clink = f"https://leetcode.com/contest/{item.get('ContestSlug', '')}"
-            updated_item = {
-                "Rating": item.get("Rating"),
-                "ID": item.get("ID"),
-                "Title": item.get("Title"),
-                "Link": tlink,
-                "ProblemIndex": item.get("ProblemIndex"),
-                "ContestID": item.get("ContestID_en"),
-                "ContestLink": clink,
-                "QID": item.get("ProblemIndex"),
-            }
-            updated_data.append(updated_item)
+            if item.get("ProblemIndex") == "Q4":
+                tlink = f"https://leetcode.com/problems/{item.get('TitleSlug', '')}"
+                clink = f"https://leetcode.com/contest/{item.get('ContestSlug', '')}"
+                updated_item = {
+                    "Rating": item.get("Rating"),
+                    "ID": item.get("ID"),
+                    "Title": item.get("Title"),
+                    "Link": tlink,
+                    "ProblemIndex": item.get("ProblemIndex"),
+                    "ContestID": item.get("ContestID_en"),
+                    "ContestLink": clink,
+                    "QID": item.get("ProblemIndex"),
+                }
+                updated_data.append(updated_item)
 
         # Sort the data based on the 'rating' key
         return sorted(updated_data, key=lambda x: x.get('Rating', 0), reverse=False)
